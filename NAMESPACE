@@ -1,0 +1,4 @@
+useDynLib(BART.sp, .registration=TRUE)
+importFrom(Rcpp, evalCpp)
+importFrom("stats", "dist", "lm", "qchisq", "quantile", "sd")
+exportPattern("^[[:alpha:]]+")
