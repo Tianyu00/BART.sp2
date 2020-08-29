@@ -409,95 +409,102 @@ void cwbart(
 
       //cout << "iy[0] " << iy[0] << " y_corr[0] " << y_corr(0) << " ";
       //cout << "iy[1] " << iy[1] << " y_corr[1] " << y_corr(1) << " ";
-      for(size_t ii=0;ii<n;ii++){new_y[ii] = iy[ii] - y_corr(ii);}
-      bm.resety(new_y);
+//       for(size_t ii=0;ii<n;ii++){new_y[ii] = iy[ii] - y_corr(ii);}
+//       bm.resety(new_y);
       //cout << " new_y[0] " << bm.y[0] << " " ;
       //cout << " new_y[1] " << bm.y[1] << " ";
 
       if(i==(burn/2)&&dart) bm.startdart();
       //draw bart
       bm.draw(svec,gen);
+      
+      //draw sigma
+      rss=0.0;
+      for(size_t k=0;k<n;k++) {restemp=(iy[k]-bm.f(k))/(iw[k]); rss += restemp*restemp;}
+      sigma = sqrt((nu*lambda + rss)/gen.chi_square(n+nu));
+      for(size_t k=0;k<n;k++) svec[k]=iw[k]*sigma;
+      sdraw[i]=sigma;
 
-      for(size_t ii=0; ii<n;ii++) {yy(ii)=(iy[ii]-bm.f(ii));}
-      siginv = arma::inv(sigma_matrix / tau2);
-      vvv = arma::inv(zz.t() * zz / sigma2 +  siginv / tau2);
-      xxx = zz.t() * yy;
+//       for(size_t ii=0; ii<n;ii++) {yy(ii)=(iy[ii]-bm.f(ii));}
+//       siginv = arma::inv(sigma_matrix / tau2);
+//       vvv = arma::inv(zz.t() * zz / sigma2 +  siginv / tau2);
+//       xxx = zz.t() * yy;
 
-      //cout << endl;
-      //cout << "sigma2 " << sigma2 << " " << "tau2 " << tau2 << " " << "range " << range << " " << "smoothness " << smoothness << " ";
-      //cout << "training " ;
-      w = mvrnormArma(1, vvv * xxx / sigma2, vvv);
-      w_record.row(i) = w.row(0);
-      y_corr = zz * w.t();
-      ssr_yy=0.0;
-      for(size_t ii=0; ii<n;ii++) ssr_yy += (yy(ii)-y_corr(ii))*(yy(ii)-y_corr(ii));
-      sigma2 = 1/R::rgamma(sigma2_prior_a + n/2, 1/(ssr_yy/2 + sigma2_prior_b));
-//       sigma = sqrt(sigma2);
-//       sdraw[i] = sigma;
+//       //cout << endl;
+//       //cout << "sigma2 " << sigma2 << " " << "tau2 " << tau2 << " " << "range " << range << " " << "smoothness " << smoothness << " ";
+//       //cout << "training " ;
+//       w = mvrnormArma(1, vvv * xxx / sigma2, vvv);
+//       w_record.row(i) = w.row(0);
+//       y_corr = zz * w.t();
+//       ssr_yy=0.0;
+//       for(size_t ii=0; ii<n;ii++) ssr_yy += (yy(ii)-y_corr(ii))*(yy(ii)-y_corr(ii));
+//       sigma2 = 1/R::rgamma(sigma2_prior_a + n/2, 1/(ssr_yy/2 + sigma2_prior_b));
+// //       sigma = sqrt(sigma2);
+// //       sdraw[i] = sigma;
 
-      // update tau2
-      temp = w*siginv*w.t();  // w here is a row vec
-      tau2 = 1/R::rgamma(tau2_prior_a + nn/2, 1/(temp(0,0)/2 + tau2_prior_b));
-      //cout << "nn " << nn << " " << "temp " <<temp(0,0)/2 << " ";
-      //cout << "tau2 " << tau2 << " ";
-      tau2_record(i) = tau2;
-      covparms(0) = tau2;
-      sigma_matrix = MaternFun(ddistance, covparms);
-      curll = dmvnrm_arma(w, zero_nn.t(), sigma_matrix)(0);
-      can_covparms = covparms;
-      can_range = R::rnorm(range,range_sd);
-      can_covparms(1) = can_range;
-      can_sigma_matrix = MaternFun(ddistance, can_covparms);
-      canll = dmvnrm_arma(w, zero_nn.t(), can_sigma_matrix)(0);
-      temp1 = R::dnorm(can_range,range_prior_mean,range_prior_sd,1);
-      temp2 = R::dnorm(range,range_prior_mean,range_prior_sd,1);
-      mh = canll-curll+temp1-temp2;
-      temp_r = log(R::runif(0,1));
-//       if(temp_r < mh){
-//         range = can_range;
-//         sigma_matrix = can_sigma_matrix;
-//         curll = canll;
-//         covparms(1) = can_range;
-//       }
+//       // update tau2
+//       temp = w*siginv*w.t();  // w here is a row vec
+//       tau2 = 1/R::rgamma(tau2_prior_a + nn/2, 1/(temp(0,0)/2 + tau2_prior_b));
+//       //cout << "nn " << nn << " " << "temp " <<temp(0,0)/2 << " ";
+//       //cout << "tau2 " << tau2 << " ";
+//       tau2_record(i) = tau2;
+//       covparms(0) = tau2;
+//       sigma_matrix = MaternFun(ddistance, covparms);
+//       curll = dmvnrm_arma(w, zero_nn.t(), sigma_matrix)(0);
+//       can_covparms = covparms;
+//       can_range = R::rnorm(range,range_sd);
+//       can_covparms(1) = can_range;
+//       can_sigma_matrix = MaternFun(ddistance, can_covparms);
+//       canll = dmvnrm_arma(w, zero_nn.t(), can_sigma_matrix)(0);
+//       temp1 = R::dnorm(can_range,range_prior_mean,range_prior_sd,1);
+//       temp2 = R::dnorm(range,range_prior_mean,range_prior_sd,1);
+//       mh = canll-curll+temp1-temp2;
+//       temp_r = log(R::runif(0,1));
+// //       if(temp_r < mh){
+// //         range = can_range;
+// //         sigma_matrix = can_sigma_matrix;
+// //         curll = canll;
+// //         covparms(1) = can_range;
+// //       }
 
-      // https://kevinushey.github.io/blog/2015/04/05/debugging-with-valgrind/
-      // smoothness
-      sigma_matrix = MaternFun(ddistance, covparms);
-      can_covparms = covparms;
-      can_smoothness = R::rnorm(smoothness,smoothness_sd);
-      can_covparms(2) = can_smoothness;
-      can_sigma_matrix = MaternFun(ddistance, can_covparms);
-      canll = dmvnrm_arma(w, zero_nn.t(), can_sigma_matrix)(0);
-      temp1 = R::dnorm(can_smoothness,smoothness_prior_mean,smoothness_prior_sd,1);
-      temp2 = R::dnorm(smoothness,smoothness_prior_mean,smoothness_prior_sd,1);
-      mh = canll-curll+temp1-temp2;
-      // https://zenglix.github.io/Rcpp_basic/
-      temp_r = log(R::runif(0,1));
-//       if(temp_r < mh){
-//         smoothness = can_smoothness;
-//         sigma_matrix = can_sigma_matrix;
-//         curll = canll;
-//         covparms(2) = can_smoothness;
-//       }
+//       // https://kevinushey.github.io/blog/2015/04/05/debugging-with-valgrind/
+//       // smoothness
+//       sigma_matrix = MaternFun(ddistance, covparms);
+//       can_covparms = covparms;
+//       can_smoothness = R::rnorm(smoothness,smoothness_sd);
+//       can_covparms(2) = can_smoothness;
+//       can_sigma_matrix = MaternFun(ddistance, can_covparms);
+//       canll = dmvnrm_arma(w, zero_nn.t(), can_sigma_matrix)(0);
+//       temp1 = R::dnorm(can_smoothness,smoothness_prior_mean,smoothness_prior_sd,1);
+//       temp2 = R::dnorm(smoothness,smoothness_prior_mean,smoothness_prior_sd,1);
+//       mh = canll-curll+temp1-temp2;
+//       // https://zenglix.github.io/Rcpp_basic/
+//       temp_r = log(R::runif(0,1));
+// //       if(temp_r < mh){
+// //         smoothness = can_smoothness;
+// //         sigma_matrix = can_sigma_matrix;
+// //         curll = canll;
+// //         covparms(2) = can_smoothness;
+// //       }
 
-      range_record(i) = range;
-      smoothness_record(i) = smoothness;
+//       range_record(i) = range;
+//       smoothness_record(i) = smoothness;
 
       if(i>=burn) {
 
-         if (new_loc){
-            // https://en.wikipedia.org/wiki/Multivariate_normal_distribution ;
-            // https://www4.stat.ncsu.edu/~reich/SpatialStats/code/Bayes_Krig.html ;
-            // http://arma.sourceforge.net/docs.html#submat ;
-            S = MaternFun(ddistance_all, covparms);
-            S11 = S.submat(0,0,nn2-1,nn2-1);
-            S12 = S.submat(0,nn2,nn2-1,nn2+nn-1);
-            S22inv = arma::inv(S.submat(nn2,nn2,nn2+nn-1,nn2+nn-1));
-            VVV2 = S11 - S12 * S22inv * (S12.t());
-            MMM = S12 * S22inv * w.t();
-            //cout << "testing ";
-            w_record_test.row(i) = mvrnormArma(1, MMM, VVV2).row(0);
-         }
+//          if (new_loc){
+//             // https://en.wikipedia.org/wiki/Multivariate_normal_distribution ;
+//             // https://www4.stat.ncsu.edu/~reich/SpatialStats/code/Bayes_Krig.html ;
+//             // http://arma.sourceforge.net/docs.html#submat ;
+//             S = MaternFun(ddistance_all, covparms);
+//             S11 = S.submat(0,0,nn2-1,nn2-1);
+//             S12 = S.submat(0,nn2,nn2-1,nn2+nn-1);
+//             S22inv = arma::inv(S.submat(nn2,nn2,nn2+nn-1,nn2+nn-1));
+//             VVV2 = S11 - S12 * S22inv * (S12.t());
+//             MMM = S12 * S22inv * w.t();
+//             //cout << "testing ";
+//             w_record_test.row(i) = mvrnormArma(1, MMM, VVV2).row(0);
+//          }
 
          for(size_t k=0;k<n;k++) trmean[k]+=bm.f(k);
          if(nkeeptrain && (((i-burn+1) % skiptr) ==0)) {
