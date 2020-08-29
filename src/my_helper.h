@@ -1,7 +1,7 @@
 #include <RcppArmadillo.h>
 //#include <boost/math/special_functions/gamma.hpp>
 //#include <boost/math/special_functions/bessel.hpp>
-#include <cmath>
+//#include <cmath>
 
 using namespace Rcpp;
 
