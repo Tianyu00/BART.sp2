@@ -432,8 +432,8 @@ void cwbart(
       ssr_yy=0.0;
       for(size_t ii=0; ii<n;ii++) ssr_yy += (yy(ii)-y_corr(ii))*(yy(ii)-y_corr(ii));
       sigma2 = 1/R::rgamma(sigma2_prior_a + n/2, 1/(ssr_yy/2 + sigma2_prior_b));
-      sigma = sqrt(sigma2);
-      sdraw[i] = sigma;
+//       sigma = sqrt(sigma2);
+//       sdraw[i] = sigma;
 
       // update tau2
       temp = w*siginv*w.t();  // w here is a row vec
@@ -453,12 +453,12 @@ void cwbart(
       temp2 = R::dnorm(range,range_prior_mean,range_prior_sd,1);
       mh = canll-curll+temp1-temp2;
       temp_r = log(R::runif(0,1));
-      if(temp_r < mh){
-        range = can_range;
-        sigma_matrix = can_sigma_matrix;
-        curll = canll;
-        covparms(1) = can_range;
-      }
+//       if(temp_r < mh){
+//         range = can_range;
+//         sigma_matrix = can_sigma_matrix;
+//         curll = canll;
+//         covparms(1) = can_range;
+//       }
 
       // https://kevinushey.github.io/blog/2015/04/05/debugging-with-valgrind/
       // smoothness
@@ -473,12 +473,12 @@ void cwbart(
       mh = canll-curll+temp1-temp2;
       // https://zenglix.github.io/Rcpp_basic/
       temp_r = log(R::runif(0,1));
-      if(temp_r < mh){
-        smoothness = can_smoothness;
-        sigma_matrix = can_sigma_matrix;
-        curll = canll;
-        covparms(2) = can_smoothness;
-      }
+//       if(temp_r < mh){
+//         smoothness = can_smoothness;
+//         sigma_matrix = can_sigma_matrix;
+//         curll = canll;
+//         covparms(2) = can_smoothness;
+//       }
 
       range_record(i) = range;
       smoothness_record(i) = smoothness;
