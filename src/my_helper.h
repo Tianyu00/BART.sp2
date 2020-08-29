@@ -1,7 +1,9 @@
 #include <RcppArmadillo.h>
 #include <boost/math/special_functions/gamma.hpp>
 #include <boost/math/special_functions/bessel.hpp>
+#include <boost/version.hpp>
 #include <cmath>
+#include <iostream>
 
 using namespace Rcpp;
 
@@ -10,9 +12,21 @@ const double log2pi = std::log(2.0 * M_PI);
 
 
 
+
+
+
+
+
 // https://stackoverflow.com/questions/47274696/segment-fault-when-using-rcpp-armadillo-and-openmp-prarallel-with-user-defined-f
 arma::mat MaternFun(arma::mat distmat, arma::vec covparms) {
 
+   std::cout << "Boost version: " 
+        << BOOST_VERSION / 100000
+        << "."
+        << BOOST_VERSION / 100 % 1000
+        << "."
+        << BOOST_VERSION % 100 
+        << std::endl;
   // covparms: 3 parameters: tau^2, range, smoothness
 
   double covparms0 = covparms(0);
