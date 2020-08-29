@@ -1,6 +1,6 @@
 #include <RcppArmadillo.h>
-#include <boost/math/special_functions/gamma.hpp>
-#include <boost/math/special_functions/bessel.hpp>
+//#include <boost/math/special_functions/gamma.hpp>
+//#include <boost/math/special_functions/bessel.hpp>
 #include <cmath>
 
 using namespace Rcpp;
@@ -32,7 +32,7 @@ arma::mat MaternFun(arma::mat distmat, arma::vec covparms) {
   double scaledist;
 
   double normcon = 1 /
-    (pow(2.0, covparms2 - 1)* boost::math::tgamma(covparms2));
+    (pow(2.0, covparms2 - 1)* 1;//boost::math::tgamma(covparms2));
 
   for (j1 = 0; j1 < d1; ++j1){
     for (j2 = 0; j2 < d2; ++j2){
@@ -41,7 +41,7 @@ arma::mat MaternFun(arma::mat distmat, arma::vec covparms) {
       } else {
         scaledist = distmat(j1, j2)/covparms1;
         covmat(j1, j2) = normcon * pow( scaledist, covparms2 ) *
-          boost::math::cyl_bessel_k(covparms2, scaledist);
+          1;//boost::math::cyl_bessel_k(covparms2, scaledist);
       }
     }
   }
