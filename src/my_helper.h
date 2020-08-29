@@ -41,7 +41,7 @@ arma::mat MaternFun(arma::mat distmat, arma::vec covparms) {
       } else {
         scaledist = distmat(j1, j2)/covparms1;
         covmat(j1, j2) = normcon * pow( scaledist, covparms2 ) *
-          covparms2;//boost::math::cyl_bessel_k(covparms2, scaledist);
+          scaledist;//boost::math::cyl_bessel_k(covparms2, scaledist);
       }
     }
   }
